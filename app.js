@@ -12,14 +12,57 @@ const render = require("./lib/htmlRenderer");
 const employeeArray = [];
 
 function promptUser() {
-  return inquirer.prompt([
+  inquirer.prompt([
     {
       type: "list",
       message: "Would you like to add another employee?",
       name: "addEmployee",
       choices: ["Yes", "No"],
-    },
-  ]);
+    }
+  ]).then(function (answers) {
+    if (answers.addEmployee === "Yes") {
+        console.log(answers.addEmployee)
+      employeeType()
+        .then(function (answers) {
+          console.log(answers.employeeType);
+          if(answers.employeeType === "Intern"){
+              internData().then(function (answers) {
+                console.log(answers.school);
+                promptUser()
+            })
+            .catch(function (err) {
+                console.log(err);
+              });
+          }
+          else if(answers.employeeType === "Engineer"){
+              engineerData().then(function (answers) {
+                console.log(answers.github);
+                promptUser()
+            })
+            .catch(function (err) {
+                console.log(err);
+              });
+          }else if(answers.employeeType === "Manager"){
+              managerData().then(function (answers) {
+                console.log(answers.office);
+                promptUser()
+            })
+            .catch(function (err) {
+                console.log(err);
+              });
+        }
+          
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    } else{
+        buildHTML();
+    }
+  })
+  .catch(function (err) {
+    console.log(err);
+  });
 }
 
 function employeeType() {
@@ -32,23 +75,81 @@ function employeeType() {
     },
   ]);
 }
-promptUser()
-  .then(function (answers) {
-    console.log(answers.addEmployee);
-    if (answers.addEmployee === "Yes") {
-      employeeType()
-        .then(function (answers) {
-          console.log(answers.employeeType);
-          
-        })
-        .catch(function (err) {
-          console.log(err);
-        });
-    }
-  })
-  .catch(function (err) {
-    console.log(err);
-  });
+
+function internData(){
+    return inquirer.prompt([
+        {
+            name: "name",
+            message: "Enter your name:",
+            type: "input"
+        },
+        {
+            name: "id",
+            message: "Enter your ID:",
+            type: "input"
+        },
+        {
+            name: "email",
+            message: "Enter your email:",
+            type: "input"
+        },
+        {
+            name: "school",
+            message: "Which school did/does the intern attend?",
+            type: "input"
+        }
+    ])
+}
+function engineerData(){
+    return inquirer.prompt([
+        {
+            name: "name",
+            message: "Enter your name:",
+            type: "input"
+        },
+        {
+            name: "id",
+            message: "Enter your ID:",
+            type: "input"
+        },
+        {
+            name: "email",
+            message: "Enter your email:",
+            type: "input"
+        },
+        {
+            name: "github",
+            message: "Please enter the engineer's github username:",
+            type: "input"
+        }
+    ])
+}
+function managerData(){
+    return inquirer.prompt([
+        {
+            name: "name",
+            message: "Enter your name:",
+            type: "input"
+        },
+        {
+            name: "id",
+            message: "Enter your ID:",
+            type: "input"
+        },
+        {
+            name: "email",
+            message: "Enter your email:",
+            type: "input"
+        },
+        {
+            name: "office",
+            message: "What is the manager's office number?",
+            type: "input"
+        }
+    ])
+}
+promptUser();
+  
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
